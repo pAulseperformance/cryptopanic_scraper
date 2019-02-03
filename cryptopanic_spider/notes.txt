@@ -1,0 +1,3 @@
+Compare all news with hot news and see if you can predict the news that will be hot.
+
+compare new news with hot news
