@@ -166,7 +166,7 @@ while True:
 print(data)
 # Save the website data
 import pickle
-file_name = "cryptopanic%s.pickle" % datetime.datetime.utcnow().date()
+file_name = "cryptopanic_all_%s.pickle" % datetime.datetime.utcnow().date()
 file_name
 with open(file_name, 'wb') as f:
           pickle.dump(data, f)
