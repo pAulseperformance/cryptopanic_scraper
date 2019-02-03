@@ -1,6 +1,10 @@
 from selenium import webdriver
 import config
 import os
+import time
+import datetime
+SCROLL_PAUSE_TIME = 1
+
 
 def getProperties():
     properties = driver.execute_script('return window.getComputedStyle(arguments[0], null);', element)
@@ -35,71 +39,100 @@ def setUp():
     return driver
 
 
+# def getData():
+#
+#     data = dict()
+#     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
+#     try:
+#         for i in range(len(elements)):
+#
+#             #  Get date posted
+#             date_time = elements[i].find_element_by_css_selector('time').get_attribute('datetime')
+#
+#             #  Get Title of News
+#             title = elements[i].find_element_by_css_selector("span.title-text").text
+#             if title == '':
+#                 driver.execute_script("arguments[0].scrollIntoView();",
+#                                       elements[i].find_element_by_css_selector("span.title-text"))
+#                 title = elements[i].find_element_by_css_selector("span.title-text").text
+#
+#             # TODO Get Link Source
+#
+#             #  Get Currency Tags
+#             currencies = []
+#             currency_elements = elements[i].find_elements_by_class_name("colored-link")
+#             for currency in currency_elements:
+#                 currencies.append(currency.text)
+#
+#             votes = []
+#             nc_votes = elements[i].find_elements_by_css_selector("span.nc-vote-cont")
+#             for nc_vote in nc_votes:
+#                 votes.append(nc_vote.get_attribute('title'))
+#             try:
+#                 data[i] = {"Date": date_time,
+#                            "Title": title,
+#                            "Currencies": currencies,
+#                            "Votes": votes}
+#             except Exception as e:
+#                 print(e)
+#                 print("Element index is %s" % i)
+#                 print("Length of elements is %s" % len(elements))
+#                 break
+#     except Exception as e:
+#         print(e)
+#     return len(elements), data
+
 def getData():
+
     data = dict()
-
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
-    print(len(elements))
-    try:
-        for i in range(len(elements)):
-            print(i)
-            print(len(elements))
 
-            #  Get date posted
-            date_time = elements[i].find_element_by_css_selector('time').get_attribute('datetime')
+    for i in range(len(elements)):
 
-            #  Get Title of News
+        #  Get date posted
+        date_time = elements[i].find_element_by_css_selector('time').get_attribute('datetime')
+
+        #  Get Title of News
+        title = elements[i].find_element_by_css_selector("span.title-text").text
+        if title == '':
+            driver.execute_script("arguments[0].scrollIntoView();",
+                                  elements[i].find_element_by_css_selector("span.title-text"))
             title = elements[i].find_element_by_css_selector("span.title-text").text
-            if title == '':
-                driver.execute_script("arguments[0].scrollIntoView();",
-                                      elements[i].find_element_by_css_selector("span.title-text"))
 
-                # print("Empty title below")
-                # print(title)
-                # print("Scrolling")
-                # # scrollCenter()
-                title = elements[i].find_element_by_css_selector("span.title-text").text
-                # print("Not empty")
-                # print(title)
+        # TODO Get Link Source
 
-            # TODO Get Link Source
+        #  Get Currency Tags
+        currencies = []
+        currency_elements = elements[i].find_elements_by_class_name("colored-link")
+        for currency in currency_elements:
+            currencies.append(currency.text)
 
-            #  Get Currency Tags
-            currency_elements = elements[i].find_elements_by_class_name("colored-link")
-            currencies = []
-            for currency in currency_elements:
-                currencies.append(currency.text)
+        votes = []
+        nc_votes = elements[i].find_elements_by_css_selector("span.nc-vote-cont")
+        for nc_vote in nc_votes:
+            votes.append(nc_vote.get_attribute('title'))
+        try:
+            data[i] = {"Date": date_time,
+                       "Title": title,
+                       "Currencies": currencies,
+                       "Votes": votes}
+        except Exception as e:
+            print(e)
+            print("Element index is %s" % i)
+            print("Length of elements is %s" % len(elements))
+            break
 
-            nc_votes = elements[i].find_elements_by_css_selector("span.nc-vote-cont")
-            votes = []
-            for nc_vote in nc_votes:
-                votes.append(nc_vote.get_attribute('title'))
-            try:
-                data[i] = {"Date": date_time,
-                           "Title": title,
-                           "Currencies": currencies,
-                           "Votes": votes}
-            except Exception as e:
-                print(e)
-                print("Element index is %s" % i)
-                print("Length of elements is %s" % len(elements))
-                break
-    except Exception as e:
-        print(e)
     return len(elements), data
 
 
 def loadMore(len_elements):
     # Load More News
-
     load_more = driver.find_element_by_class_name('btn-outline-primary')
-
     driver.execute_script("arguments[0].scrollIntoView();", load_more)
-    time.sleep(1)
+
+    time.sleep(SCROLL_PAUSE_TIME)
 
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
-    print(len_elements, len(elements))
-
     if len_elements < len(elements):
         print("loaded %s more rows" % (len(elements) - len_elements))
         return True
@@ -111,11 +144,9 @@ def loadMore(len_elements):
 
 def tearDown():
     driver.quit()
+tearDown()
 
 driver = setUp()
-
-import time
-SCROLL_PAUSE_TIME = 1
 
 
 while True:
@@ -126,17 +157,16 @@ while True:
         continue
     else:
         print("Gathering Data...")
-        try:
-            len_data, data = getData()
-        except:
-            print(len_data, data)
-            print("finished!")
+        len_data, data = getData()
+        print(len_data, data)
+        print("finished!")
         tearDown()
         break
-tearDown()
-print(len_data)
-print(len(elements))
+
+print(data)
 # Save the website data
 import pickle
-with open('cryptocompare.pickle', 'wb') as f:
+file_name = "cryptopanic%s.pickle" % datetime.datetime.utcnow().date()
+file_name
+with open(file_name, 'wb') as f:
           pickle.dump(data, f)
