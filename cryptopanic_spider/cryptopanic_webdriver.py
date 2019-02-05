@@ -43,10 +43,11 @@ def setUp():
 
 
 def getData():
-
     data = dict()
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
 
+    print("Gathering Data...")
+    print("Time Start:%s" % datetime.datetime.today().ctime())
     for i in range(len(elements)):
 
         #  Get date posted
@@ -84,7 +85,9 @@ def getData():
             print("Length of elements is %s" % len(elements))
             break
 
-    return len(elements), data
+    print("Finished gathering %s rows of data" % len(elements))
+    print("Time End:%s" % datetime.datetime.today().ctime())
+    return data
 
 
 def loadMore(len_elements):
@@ -109,6 +112,7 @@ def saveData(data):
     file_name = "cryptopanic_{}_{}->{}.pickle".format(filter.lower(),
                                                       data[len(data) - 1]['Date'].__str__(),
                                                       data[0]['Date'].__str__())
+    print("Saving data to %s" % file_name)
     with open(file_name, 'wb') as f:
         pickle.dump(data, f)
 
@@ -122,14 +126,10 @@ driver, filter = setUp()
 while True:
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
     print("Total Rows loaded:%s" % len(elements))
-    # time.sleep(SCROLL_PAUSE_TIME)
     if loadMore(len(elements)):
         continue
     else:
-        print("Gathering Data...")
-        len_data, data = getData()
+        data = getData()
         saveData(data)
-        print(len_data, data)
-        print("finished!")
         tearDown()
         break
