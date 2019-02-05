@@ -137,16 +137,16 @@ def tearDown():
 
 
 driver, filter = setUp()
+if __name__ == "__main__":
+    print("Scrolling and Loading News Feed. ;)")
+    while True:
 
-print("Scrolling and Loading News Feed. ;)")
-while True:
+        elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
 
-    elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
-
-    if loadMore(len(elements)):
-        continue
-    else:
-        data = getData()
-        saveData(data)
-        tearDown()
-        break
+        if loadMore(len(elements)):
+            continue
+        else:
+            data = getData()
+            saveData(data)
+            tearDown()
+            break
