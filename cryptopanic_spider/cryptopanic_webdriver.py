@@ -9,6 +9,7 @@ import pickle
 import urllib
 
 
+ROOT_DIR = os.path.dirname(os.getcwd())
 SCROLL_PAUSE_TIME = 1
 
 
@@ -20,7 +21,7 @@ def setUp():
         filter = 'All'
 
     url = "https://www.cryptopanic.com/news?filter={}".format(filter)
-    chromedriver_path = os.path.join(config.ROOT_DIR, "chromedriver")
+    chromedriver_path = os.path.join(ROOT_DIR, "chromedriver")
 
     options = webdriver.ChromeOptions()
 
