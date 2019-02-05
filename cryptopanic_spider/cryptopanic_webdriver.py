@@ -24,7 +24,7 @@ def setUp():
     options = webdriver.ChromeOptions()
 
     # initialize headless mode
-    # options.add_argument('headless')
+    options.add_argument('headless')
     # webdriver.ChromeOptions().extensions
     # webdriver.ChromeOptions().add_extension()
 
@@ -39,7 +39,7 @@ def setUp():
     # wait up to 10 seconds for the elements to become available
     driver.implicitly_wait(2)
 
-    return driver
+    return driver, filter
 
 
 def getData():
@@ -89,7 +89,6 @@ def getData():
 
 def loadMore(len_elements):
     # Load More News
-    return False
     load_more = driver.find_element_by_class_name('btn-outline-primary')
     driver.execute_script("arguments[0].scrollIntoView();", load_more)
 
@@ -105,11 +104,20 @@ def loadMore(len_elements):
         return False
 
 
+def saveData(data):
+    # Save the website data
+    file_name = "cryptopanic_{}_{}->{}.pickle".format(filter.lower(),
+                                                      data[len(data) - 1]['Date'].__str__(),
+                                                      data[0]['Date'].__str__())
+    with open(file_name, 'wb') as f:
+        pickle.dump(data, f)
+
+
 def tearDown():
     driver.quit()
 
 
-driver = setUp()
+driver, filter = setUp()
 
 while True:
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
@@ -120,25 +128,8 @@ while True:
     else:
         print("Gathering Data...")
         len_data, data = getData()
+        saveData(data)
         print(len_data, data)
         print("finished!")
         tearDown()
         break
-
-
-print(data)
-# Save the website data
-filter = 'All'
-
-file_name = "cryptopanic_{}_{}->{}.pickle".format(filter.lower(),
-                                                  data[len(data)-1]['Date'].__str__(),
-                                                  data[0]['Date'].__str__())
-
-
-with open(file_name, 'wb') as f:
-          pickle.dump(data, f)
-
-# with open('cryptopanic_all_2019-02-03.pickle', 'rb') as f:
-#     data = pickle.load(f)
-# line = re.sub('-.*', '', str(data[len(data)-1]['Date']))
-# line
