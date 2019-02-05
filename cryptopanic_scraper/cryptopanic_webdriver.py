@@ -128,7 +128,7 @@ def saveData(data):
                                                               str(data[len(data) - 1]['Date']),
                                                               str(data[0]['Date']))
     print("Saving data to %s\n" % file_name)
-    with open(file_name, 'wb') as f:
+    with open("data/" + file_name, 'wb') as f:
         pickle.dump(data, f)
 
 
