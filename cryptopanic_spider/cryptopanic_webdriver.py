@@ -6,6 +6,7 @@ import datetime
 import sys
 import re
 import pickle
+import urllib
 
 
 SCROLL_PAUSE_TIME = 1
@@ -15,7 +16,7 @@ def setUp():
     try:
         filter = sys.argv[1]
     except Exception as e:
-        print(e)
+        # print(e)
         filter = 'All'
 
     url = "https://www.cryptopanic.com/news?filter={}".format(filter)
@@ -25,8 +26,6 @@ def setUp():
 
     # initialize headless mode
     options.add_argument('headless')
-    # webdriver.ChromeOptions().extensions
-    # webdriver.ChromeOptions().add_extension()
 
     # Set the window size
     options.add_argument('window-size=1200x800')
@@ -78,13 +77,18 @@ def getData():
         date_time = datetime.datetime.strptime(string_date, "%a %b %d %Y %H:%M:%S %Z")
 
         #  Get Title of News
-        title = elements[i].find_element_by_css_selector("span.title-text").text
+        title = elements[i].find_element_by_css_selector("span.title-text span:nth-child(1)").text
         if title == '':
             driver.execute_script("arguments[0].scrollIntoView();",
                                   elements[i].find_element_by_css_selector("span.title-text"))
-            title = elements[i].find_element_by_css_selector("span.title-text").text
+            title = elements[i].find_element_by_css_selector("span.title-text span:nth-child(1)").text
 
-        # TODO Get Link Source
+        # Get Source URL
+        elements[i].find_element_by_css_selector("a.news-cell.nc-title").click()
+        source_name = elements[i].find_element_by_css_selector("span.si-source-name").text
+        source_link = driver.find_element_by_xpath("//div/h1/a[2]").get_property('href')
+        source_url = re.sub(".*=", '', urllib.parse.unquote(source_link))
+        driver.back()
 
         #  Get Currency Tags
         currencies = []
@@ -100,11 +104,15 @@ def getData():
         data[i] = {"Date": date_time,
                    "Title": title,
                    "Currencies": currencies,
-                   "Votes": votes}
-        print("Downloaded %s of %s\nTitle: %s\nPublished: %s\n" % (i + 1,
-                                                                   total_rows,
-                                                                   data[i]['Title'],
-                                                                   data[i]["Date"]))
+                   "Votes": votes,
+                   "Source": source_name,
+                   "URL": source_url}
+        print("Downloaded %s of %s\nPublished: %s\nTitle: %s\nSource: %s\nURL: %s\n" % (i + 1,
+                                                                                        total_rows,
+                                                                                        data[i]["Date"],
+                                                                                        data[i]["Title"],
+                                                                                        data[i]["Source"],
+                                                                                        data[i]["URL"]))
 
     print("Finished gathering %s rows of data\n" % len(data))
     print("Time End: %.19s" % datetime.datetime.now())
@@ -124,7 +132,7 @@ def saveData(data):
 
 
 def tearDown():
-    print("Exiting Headless Chrome Driver\n")
+    print("Exiting Chrome Driver")
     driver.quit()
 
 
@@ -142,20 +150,3 @@ while True:
         saveData(data)
         tearDown()
         break
-
-
-def loadData():
-
-    # Save the website data
-    file_name = "cryptopanic_hot_2019-02-03 11:10:04->2019-02-04 15:00:46.pickle"
-    with open(file_name, 'rb') as f:
-        return pickle.load(f)
-# data = loadData()
-# print(data[len(data)-8]['Date'])
-# print(data[2]['Date'])
-# file_name = "cryptopanic_{}_{:.10}->{:.10}.pickle".format(filter.lower(),
-#                                                   str(data[len(data) - 8]['Date']),
-#                                                   str(data[0]['Date']))
-# file_name
-# for i in range(len(data)):
-#     print(i, data[i]["Date"])
