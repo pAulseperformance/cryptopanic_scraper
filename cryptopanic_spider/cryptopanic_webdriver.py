@@ -47,7 +47,8 @@ def getData():
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
 
     print("Gathering Data...")
-    print("Time Start:%s" % datetime.datetime.today().ctime())
+    start = datetime.datetime.today()
+    print("Time Start: %s" % start.ctime())
     for i in range(len(elements)):
 
         #  Get date posted
@@ -86,7 +87,9 @@ def getData():
             break
 
     print("Finished gathering %s rows of data" % len(elements))
-    print("Time End:%s" % datetime.datetime.today().ctime())
+    print("Time End: %.19s" % datetime.datetime.now())
+    print("Elapsed Time Gathering Data: %.7s" % (datetime.datetime.now() - start))
+
     return data
 
 
@@ -99,7 +102,7 @@ def loadMore(len_elements):
 
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
     if len_elements < len(elements):
-        print("loaded %s more rows" % (len(elements) - len_elements))
+        print("Loading %s more rows" % (len(elements) - len_elements))
         return True
     else:
         print("No more rows to load :/")
@@ -110,8 +113,8 @@ def loadMore(len_elements):
 def saveData(data):
     # Save the website data
     file_name = "cryptopanic_{}_{}->{}.pickle".format(filter.lower(),
-                                                      data[len(data) - 1]['Date'].__str__(),
-                                                      data[0]['Date'].__str__())
+                                                      str(data[len(data) - 1]['Date']),
+                                                      str(data[0]['Date']))
     print("Saving data to %s" % file_name)
     with open(file_name, 'wb') as f:
         pickle.dump(data, f)
@@ -125,10 +128,10 @@ driver, filter = setUp()
 
 while True:
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
-    print("Total Rows loaded:%s" % len(elements))
     if loadMore(len(elements)):
         continue
     else:
+        print("Total Rows loaded:%s" % len(elements))
         data = getData()
         saveData(data)
         tearDown()
