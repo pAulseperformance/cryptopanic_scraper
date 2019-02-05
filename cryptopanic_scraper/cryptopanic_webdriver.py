@@ -1,5 +1,4 @@
 from selenium import webdriver
-import config
 import os
 import time
 import datetime
@@ -10,6 +9,7 @@ import urllib
 
 
 ROOT_DIR = os.path.dirname(os.getcwd())
+abs_path_data = "/Users/pAulse/Documents/Projects/Python Projects/Webscraping/robobrowser/cryptopanic/cryptopanic_scraper/data/"
 SCROLL_PAUSE_TIME = 1
 
 
@@ -128,7 +128,7 @@ def saveData(data):
                                                               str(data[len(data) - 1]['Date']),
                                                               str(data[0]['Date']))
     print("Saving data to %s\n" % file_name)
-    with open("data/" + file_name, 'wb') as f:
+    with open(abs_path_data + file_name, 'wb') as f:
         pickle.dump(data, f)
 
 
