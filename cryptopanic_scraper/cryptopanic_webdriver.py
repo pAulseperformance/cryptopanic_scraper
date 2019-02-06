@@ -6,6 +6,19 @@ import sys
 import re
 import pickle
 import urllib
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-v", "--verbose", help="increase output verbosity",
+                    action="store_true")
+args = parser.parse_args()
+if args.verbose:
+    print("verbosity turned on")
+
+# TODO: Create logger for exception handling
+# TODO: Replace print with logger
+# TODO: Add argparse for headless, silent and filters
+# TODO: Create bash script or cron to automate this script
 
 
 ROOT_DIR = os.path.dirname(os.getcwd())
@@ -28,6 +41,10 @@ def setUp():
     # initialize headless mode
     options.add_argument('headless')
 
+    # Don't load images
+    prefs = {"profile.managed_default_content_settings.images": 2}
+    options.add_experimental_option("prefs", prefs)
+
     # Set the window size
     options.add_argument('window-size=1200x800')
 
@@ -38,7 +55,7 @@ def setUp():
     print("Navigating to %s\n" % url)
     driver.get(url)
 
-    # wait up to 10 seconds for the elements to become available
+    # wait up to 5 seconds for the elements to become available
     driver.implicitly_wait(2)
 
     return driver, filter
@@ -53,11 +70,13 @@ def loadMore(len_elements):
 
     elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
     if len_elements < len(elements):
-        print("Loading %s more rows" % (len(elements) - len_elements))
+        if args.verbose:
+            print("Loading %s more rows" % (len(elements) - len_elements))
         return True
     else:
-        print("No more rows to load :/")
-        print("Total rows loaded: %s\n" % len(elements))
+        if args.verbose:
+            print("No more rows to load :/")
+            print("Total rows loaded: %s\n" % len(elements))
         return False
 
 
@@ -69,54 +88,58 @@ def getData():
     print("Downloading Data...\n")
     start = datetime.datetime.today()
     print("Time Start: %s\n" % start.ctime())
+
     for i in range(total_rows):
-        # print("Downloading Row %s of %s" % (i + 1, total_rows))
+        try:
+            #  Get date posted
+            date_time = elements[i].find_element_by_css_selector('time').get_attribute('datetime')
+            string_date = re.sub('-.*', '', date_time)
+            date_time = datetime.datetime.strptime(string_date, "%a %b %d %Y %H:%M:%S %Z")
 
-        #  Get date posted
-        date_time = elements[i].find_element_by_css_selector('time').get_attribute('datetime')
-        string_date = re.sub('-.*', '', date_time)
-        date_time = datetime.datetime.strptime(string_date, "%a %b %d %Y %H:%M:%S %Z")
-
-        #  Get Title of News
-        title = elements[i].find_element_by_css_selector("span.title-text span:nth-child(1)").text
-        if title == '':
-            driver.execute_script("arguments[0].scrollIntoView();",
-                                  elements[i].find_element_by_css_selector("span.title-text"))
+            #  Get Title of News
             title = elements[i].find_element_by_css_selector("span.title-text span:nth-child(1)").text
+            if title == '':
+                driver.execute_script("arguments[0].scrollIntoView();",
+                                      elements[i].find_element_by_css_selector("span.title-text"))
+                title = elements[i].find_element_by_css_selector("span.title-text span:nth-child(1)").text
 
-        # Get Source URL
-        elements[i].find_element_by_css_selector("a.news-cell.nc-title").click()
-        source_name = elements[i].find_element_by_css_selector("span.si-source-name").text
-        source_link = driver.find_element_by_xpath("//div/h1/a[2]").get_property('href')
-        source_url = re.sub(".*=", '', urllib.parse.unquote(source_link))
-        driver.back()
+            # Get Source URL
+            elements[i].find_element_by_css_selector("a.news-cell.nc-title").click()
+            source_name = elements[i].find_element_by_css_selector("span.si-source-name").text
+            source_link = driver.find_element_by_xpath("//div/h1/a[2]").get_property('href')
+            source_url = re.sub(".*=", '', urllib.parse.unquote(source_link))
+            driver.back()
 
-        #  Get Currency Tags
-        currencies = []
-        currency_elements = elements[i].find_elements_by_class_name("colored-link")
-        for currency in currency_elements:
-            currencies.append(currency.text)
+            #  Get Currency Tags
+            currencies = []
+            currency_elements = elements[i].find_elements_by_class_name("colored-link")
+            for currency in currency_elements:
+                currencies.append(currency.text)
 
-        votes = dict()
-        nc_votes = elements[i].find_elements_by_css_selector("span.nc-vote-cont")
-        for nc_vote in nc_votes:
-            vote = nc_vote.get_attribute('title')
-            value = vote[:2]
-            action = vote.replace(value, '').replace('votes', '').strip()
-            votes[action] = int(value)
+            votes = dict()
+            nc_votes = elements[i].find_elements_by_css_selector("span.nc-vote-cont")
+            for nc_vote in nc_votes:
+                vote = nc_vote.get_attribute('title')
+                value = vote[:2]
+                action = vote.replace(value, '').replace('votes', '').strip()
+                votes[action] = int(value)
 
-        data[i] = {"Date": date_time,
-                   "Title": title,
-                   "Currencies": currencies,
-                   "Votes": votes,
-                   "Source": source_name,
-                   "URL": source_url}
-        print("Downloaded %s of %s\nPublished: %s\nTitle: %s\nSource: %s\nURL: %s\n" % (i + 1,
-                                                                                        total_rows,
-                                                                                        data[i]["Date"],
-                                                                                        data[i]["Title"],
-                                                                                        data[i]["Source"],
-                                                                                        data[i]["URL"]))
+            data[i] = {"Date": date_time,
+                       "Title": title,
+                       "Currencies": currencies,
+                       "Votes": votes,
+                       "Source": source_name,
+                       "URL": source_url}
+            if args.verbose:
+                print("Downloaded %s of %s\nPublished: %s\nTitle: %s\nSource: %s\nURL: %s\n" % (i + 1,
+                                                                                                total_rows,
+                                                                                                data[i]["Date"],
+                                                                                                data[i]["Title"],
+                                                                                                data[i]["Source"],
+                                                                                                data[i]["URL"]))
+        except Exception as e:
+            print(e)
+            continue
 
     print("Finished gathering %s rows of data\n" % len(data))
     print("Time End: %.19s" % datetime.datetime.now())
@@ -136,13 +159,15 @@ def saveData(data):
 
 
 def tearDown():
-    print("Exiting Chrome Driver")
+    if args.verbose:
+        print("Exiting Chrome Driver")
     driver.quit()
 
 
 driver, filter = setUp()
 if __name__ == "__main__":
-    print("Scrolling and Loading News Feed. ;)")
+    if args.verbose:
+        print("Scrolling and Loading News Feed. ;)")
     while True:
 
         elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
