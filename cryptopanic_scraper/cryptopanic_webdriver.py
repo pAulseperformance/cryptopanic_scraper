@@ -11,13 +11,23 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", help="increase output verbosity",
                     action="store_true")
+
+parser.add_argument("-f", "--filter",
+                    help="Type of News filter",
+                    default="All",
+                    choices=['all', "hot", "rising", "bullish",
+                             "bearish", "lol", "commented", "important", "saved"])
+
+parser.add_argument("-s", "--headless", help="Run Chrome driver headless",
+                    action="store_true")
+
 args = parser.parse_args()
+
 if args.verbose:
     print("verbosity turned on")
 
 # TODO: Create logger for exception handling
 # TODO: Replace print with logger
-# TODO: Add argparse for headless, silent and filters
 # TODO: Create bash script or cron to automate this script
 
 
@@ -27,19 +37,15 @@ SCROLL_PAUSE_TIME = 1
 
 
 def setUp():
-    try:
-        filter = sys.argv[1]
-    except Exception as e:
-        # print(e)
-        filter = 'All'
 
-    url = "https://www.cryptopanic.com/news?filter={}".format(filter)
+    url = "https://www.cryptopanic.com/news?filter={}".format(args.filter)
     chromedriver_path = os.path.join(ROOT_DIR, "chromedriver")
 
     options = webdriver.ChromeOptions()
 
     # initialize headless mode
-    options.add_argument('headless')
+    if args.headless:
+        options.add_argument('headless')
 
     # Don't load images
     prefs = {"profile.managed_default_content_settings.images": 2}
@@ -58,7 +64,7 @@ def setUp():
     # wait up to 5 seconds for the elements to become available
     driver.implicitly_wait(2)
 
-    return driver, filter
+    return driver
 
 
 def loadMore(len_elements):
@@ -164,10 +170,10 @@ def tearDown():
     driver.quit()
 
 
-driver, filter = setUp()
+driver = setUp()
 if __name__ == "__main__":
-    if args.verbose:
-        print("Scrolling and Loading News Feed. ;)")
+
+    print("Loading News Feed...\n")
     while True:
 
         elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
