@@ -45,6 +45,7 @@ def setUp():
 
 
 def loadMore(len_elements):
+    return False
     # Load More News
     load_more = driver.find_element_by_class_name('btn-outline-primary')
     driver.execute_script("arguments[0].scrollIntoView();", load_more)
@@ -97,10 +98,13 @@ def getData():
         for currency in currency_elements:
             currencies.append(currency.text)
 
-        votes = []
+        votes = dict()
         nc_votes = elements[i].find_elements_by_css_selector("span.nc-vote-cont")
         for nc_vote in nc_votes:
-            votes.append(nc_vote.get_attribute('title'))
+            vote = nc_vote.get_attribute('title')
+            value = vote[:2]
+            action = vote.replace(value, '').replace('votes', '').strip()
+            votes[action] = int(value)
 
         data[i] = {"Date": date_time,
                    "Title": title,
