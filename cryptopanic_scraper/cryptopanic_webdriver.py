@@ -45,7 +45,6 @@ def setUp():
 
 
 def loadMore(len_elements):
-    return False
     # Load More News
     load_more = driver.find_element_by_class_name('btn-outline-primary')
     driver.execute_script("arguments[0].scrollIntoView();", load_more)
