@@ -32,7 +32,7 @@ if args.verbose:
 
 
 ROOT_DIR = os.path.dirname(os.getcwd())
-abs_path_data = "/Users/pAulse/Documents/Projects/Python Projects/Webscraping/robobrowser/cryptopanic/cryptopanic_scraper/data/"
+abs_path_data = "/Users/pAulse/Documents/Projects/Python/Webscraping/robobrowser/cryptopanic/cryptopanic_scraper/data/"
 SCROLL_PAUSE_TIME = 1
 
 
@@ -62,12 +62,13 @@ def setUp():
     driver.get(url)
 
     # wait up to 5 seconds for the elements to become available
-    driver.implicitly_wait(2)
+    driver.implicitly_wait(2.5)
 
     return driver
 
 
 def loadMore(len_elements):
+    # return False
     # Load More News
     load_more = driver.find_element_by_class_name('btn-outline-primary')
     driver.execute_script("arguments[0].scrollIntoView();", load_more)
@@ -96,6 +97,7 @@ def getData():
     print("Time Start: %s\n" % start.ctime())
 
     for i in range(total_rows):
+        time.sleep(.5)  # Busy sleep to keep cpu cool
         try:
             #  Get date posted
             date_time = elements[i].find_element_by_css_selector('time').get_attribute('datetime')
@@ -156,7 +158,7 @@ def getData():
 
 def saveData(data):
     # Save the website data
-    file_name = "cryptopanic_{}_{:.10}->{:.10}.pickle".format(filter.lower(),
+    file_name = "cryptopanic_{}_{:.10}->{:.10}.pickle".format(args.filter.lower(),
                                                               str(data[len(data) - 1]['Date']),
                                                               str(data[0]['Date']))
     print("Saving data to %s\n" % file_name)
