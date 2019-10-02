@@ -2,7 +2,6 @@ from selenium import webdriver
 import os
 import time
 import datetime
-import sys
 import re
 import pickle
 import urllib
