@@ -15,23 +15,23 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/github_username/repo">
+  <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">YOUR_TITLE</h3>
+  <h3 align="center">Cryptopanic Scraper</h3>
 
   <p align="center">
-    YOUR_SHORT_DESCRIPTION
+    Headless chromedriver for automatic scraping of cryptopanics asynchronous newsfeed.
     <br />
-    <a href="https://github.com/github_username/repo"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo">View Demo</a>
+    <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper">View Demo</a>
     ·
-    <a href="https://github.com/github_username/repo/issues">Report Bug</a>
+    <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper/issues">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo/issues">Request Feature</a>
+    <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper/issues">Request Feature</a>
   </p>
 </p>
 
@@ -57,18 +57,16 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]](https://cryptopanic.com/)
 
-Here's a blank template to get started:
-**To avoid retyping too much info. Do a search and replace with your text editor for the following:**
-`github_username`, `repo`, `twitter_handle`, `email`
-
+Cryptopanic is a crypto news aggregator that offers realtime news feeds of all things crypto as well 
+as user input for ratings.
+This project was designed to scrape the data from their website so it could be later analyzed using NLP.
 
 ### Built With
 
-* []()
-* []()
-* []()
+* [Python](https://github.com/topics/python)
+* [Selenium](https://github.com/topics/selenium)
 
 
 
@@ -79,38 +77,63 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-```sh
-npm install npm@latest -g
-```
+
+* python 3
+* pip 
+
 
 ### Installation
  
-1. Clone the repo
-```sh
-git clone https:://github.com/github_username/repo.git
-```
-2. Install NPM packages
-```sh
-npm install
-```
+1. Clone the cryptopanic_scraper
+    ```sh
+    git clone https:://github.com/grilledchickenthighs/cryptopanic_scraper.git
+    ```
+2. Change directory
+    ```sh
+    cd cryptopanic_scraper
+    ```
+3. Install packages
+    ```sh
+    pip install -r requirements.txt
+    ```
 
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
+Simply run:
+```sh
+python cryptopanic_scraper.py --headless
+```
+If you want to see it in action, run the script without any flags.
+```sh
+python cryptopanic_scraper.py 
+```
+If you want to filter the type of news to scrape add the --filter flag and choose
+a type. {all,hot,rising,bullish,bearish,lol,commented,important,saved}
+```sh
+python cryptopanic_scraper.py --filter hot
+```
+You can always use the --help flag if you forget these commands:
+```sh
+python cryptopanic_scraper.py --help
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+usage: cryptopanic_webdriver.py [-h] [-v]
+                                [-f {all,hot,rising,bullish,bearish,lol,commented,important,saved}]
+                                [-s]
 
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         increase output verbosity
+  -f {all,hot,rising,bullish,bearish,lol,commented,important,saved}, --filter {all,hot,rising,bullish,bearish,lol,commented,important,saved}
+                        Type of News filter
+  -s, --headless        Run Chrome driver headless
+```
 
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/github_username/repo/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/grilledchickenthighs/cryptopanic_scraper/issues) for a list of proposed features (and known issues).
 
 
 
@@ -137,30 +160,19 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email
+Paul Mendes - [@BTCTradeNation](https://twitter.com/BTCTradeNation) - [paulsperformance@gmail.com](mailto:paulseperformance@gmail.com)
 
-Project Link: [https://github.com/github_username/repo](https://github.com/github_username/repo)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-
-* []()
-* []()
-* []()
-
-
+Project Link: [https://github.com/grilledchickenthighs/cryptopanic_scraper](https://github.com/grilledchickenthighs/cryptopanic_scraper)
 
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/grilledchickenthighs/cryptopanic_scraper?style=plastic
+[contributors-shield]: https://img.shields.io/github/contributors/grilledchickenthighs/cryptopanic_scraper?style=flat-square
 [contributors-url]: https://github.com/GrilledChickenThighs/cryptopanic_scraper/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/grilledchickenthighs/cryptopanic_scraper?style=plastic
+[forks-shield]: https://img.shields.io/github/forks/grilledchickenthighs/cryptopanic_scraper?style=flat-sqaure
 [forks-url]: https://github.com/GrilledChickenThighs/cryptopanic_scraper/network/members
-[stars-shield]: https://img.shields.io/github/stars/grilledchickenthighs/cryptopanic_scraper?style=plastic
+[stars-shield]: https://img.shields.io/github/stars/grilledchickenthighs/cryptopanic_scraper?style=flat-square
 [stars-url]: https://github.com/grilledchickenthighs/cryptopanic_scraper/stargazers
 [issues-shield]: https://img.shields.io/github/issues/grilledchickenthighs/cryptopanic_scraper.svg?style=flat-square
 [issues-url]: https://github.com/grilledchickenthighs/cryptopanic_scraper/issues

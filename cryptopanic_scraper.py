@@ -40,7 +40,6 @@ SCROLL_PAUSE_TIME = 1
 def setUp():
 
     url = "https://www.cryptopanic.com/news?filter={}".format(args.filter)
-    chromedriver_path = os.path.join(ROOT_DIR, "chromedriver")
 
     options = webdriver.ChromeOptions()
 
@@ -62,14 +61,15 @@ def setUp():
     print("Navigating to %s\n" % url)
     driver.get(url)
 
-    # wait up to 5 seconds for the elements to become available
+    # wait up to 2.5 seconds for the elements to become available
     driver.implicitly_wait(2.5)
 
     return driver
 
 
 def loadMore(len_elements):
-    # return False
+    # Infinite scroll
+
     # Load More News
     load_more = driver.find_element_by_class_name('btn-outline-primary')
     driver.execute_script("arguments[0].scrollIntoView();", load_more)
