@@ -7,6 +7,8 @@ import re
 import pickle
 import urllib
 import argparse
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", help="increase output verbosity",
@@ -56,7 +58,7 @@ def setUp():
 
     # initialize the driver
     print("Initializing chromedriver.\n")
-    driver = webdriver.Chrome(chrome_options=options, executable_path=chromedriver_path)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
     print("Navigating to %s\n" % url)
     driver.get(url)
