@@ -24,7 +24,7 @@
   <p align="center">
     Headless chromedriver for automatic scraping of cryptopanics asynchronous newsfeed.
     <br />
-    <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper"><strong>Explore the docs »</strong></a>
+    <a href="#usage"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper/issues">Report Bug</a>
@@ -126,6 +126,10 @@ optional arguments:
                         Type of News filter
   -s, --headless        Run Chrome driver headless
 ```
+
+If your interested in analyzing the data:
+
+Please feel free to check out the [jupyter](https://github.com/GrilledChickenThighs/cryptopanic_scraper/tree/master/jupyter) directory for getting started.
 
 <!-- ROADMAP -->
 ## Roadmap
