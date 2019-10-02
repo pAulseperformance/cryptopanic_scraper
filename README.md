@@ -27,8 +27,6 @@
     <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper">View Demo</a>
-    ·
     <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper/issues">Report Bug</a>
     ·
     <a href="https://github.com/grilledchickenthighs/cryptopanic_scraper/issues">Request Feature</a>
@@ -50,7 +48,6 @@
 * [Contributing](#contributing)
 * [License](#license)
 * [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
 
 
 
@@ -160,7 +157,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Paul Mendes - [@BTCTradeNation](https://twitter.com/BTCTradeNation) - [paulsperformance@gmail.com](mailto:paulseperformance@gmail.com)
+[Paul Mendes](https://grilledchickenthighs.github.io/) - [@BTCTradeNation](https://twitter.com/BTCTradeNation) - [paulsperformance@gmail.com](mailto:paulseperformance@gmail.com)
 
 Project Link: [https://github.com/grilledchickenthighs/cryptopanic_scraper](https://github.com/grilledchickenthighs/cryptopanic_scraper)
 
