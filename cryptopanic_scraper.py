@@ -7,7 +7,7 @@ import pickle
 import urllib
 import argparse
 from webdriver_manager.chrome import ChromeDriverManager
-
+import pathlib
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose", help="increase output verbosity",
@@ -22,6 +22,10 @@ parser.add_argument("-f", "--filter",
 parser.add_argument("-s", "--headless", help="Run Chrome driver headless",
                     action="store_true")
 
+parser.add_argument("-l", "--limit", help="Amount of pages to scrape",
+                    type=int, default=None)
+
+
 args = parser.parse_args()
 
 if args.verbose:
@@ -32,8 +36,7 @@ if args.verbose:
 # TODO: Create bash script or cron to automate this script
 
 
-ROOT_DIR = os.path.dirname(os.getcwd())
-abs_path_data = "/Users/pAulse/Documents/Projects/Python/Webscraping/robobrowser/cryptopanic/cryptopanic_scraper/data/"
+
 SCROLL_PAUSE_TIME = 1
 
 
@@ -94,17 +97,19 @@ def getData():
 
     total_rows = len(elements) - 7  # elements being returned are appended by 7 of the first rows.
     print("Downloading Data...\n")
-    start = datetime.datetime.today()
-    print("Time Start: %s\n" % start.ctime())
+    start = datetime.datetime.now()
+    print("Time Start: %s\n" % start)
 
     for i in range(total_rows):
+        if i >= args.limit:
+            print(f'Limit argument of {args.limit} hit.')
+            break
         time.sleep(.5)  # Busy sleep to keep cpu cool
         try:
             #  Get date posted
             date_time = elements[i].find_element_by_css_selector('time').get_attribute('datetime')
-            string_date = re.sub('-.*', '', date_time)
-            date_time = datetime.datetime.strptime(string_date, "%a %b %d %Y %H:%M:%S %Z")
-
+            # string_date = re.sub('-.*', '', date_time)
+            # date_time = datetime.datetime.strptime(string_date, "%a %b %d %Y %H:%M:%S %Z")
             #  Get Title of News
             title = elements[i].find_element_by_css_selector("span.title-text span:nth-child(1)").text
             if title == '':
@@ -148,7 +153,7 @@ def getData():
                                                                                                 data[i]["URL"]))
         except Exception as e:
             print(e)
-            continue
+            raise e
 
     print("Finished gathering %s rows of data\n" % len(data))
     print("Time End: %.19s" % datetime.datetime.now())
@@ -162,9 +167,13 @@ def saveData(data):
     file_name = "cryptopanic_{}_{:.10}->{:.10}.pickle".format(args.filter.lower(),
                                                               str(data[len(data) - 1]['Date']),
                                                               str(data[0]['Date']))
-    print("Saving data to %s\n" % file_name)
-    with open(abs_path_data + file_name, 'wb') as f:
+    # Make sure directory exists, if not make one.
+    pathlib.Path("data").mkdir(parents=True, exist_ok=True)
+
+    with open(os.path.join(os.getcwd(), 'data', file_name), 'wb') as f:
         pickle.dump(data, f)
+
+    print("Saved data to %s\n" % file_name)
 
 
 def tearDown():
@@ -175,13 +184,16 @@ def tearDown():
 
 driver = setUp()
 if __name__ == "__main__":
-
+    if args.limit is not None:
+        data_limit = args.limit
+    else:
+        data_limit = 100000  # Just make this number massive.
     print("Loading News Feed...\n")
     while True:
 
         elements = driver.find_elements_by_css_selector('div.news-row.news-row-link')
 
-        if loadMore(len(elements)):
+        if len(elements) <= data_limit and loadMore(len(elements)):
             continue
         else:
             data = getData()
